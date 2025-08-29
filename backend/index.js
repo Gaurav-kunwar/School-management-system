@@ -14,7 +14,24 @@ dotenv.config();
 // app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }))
 
 app.use(express.json({ limit: '10mb' }))
-app.use(cors())
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://school-management-101.netlify.app'
+];
+
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 mongoose
     .connect(process.env.MONGO_URL, {
